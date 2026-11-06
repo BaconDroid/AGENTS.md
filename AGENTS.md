@@ -45,7 +45,6 @@ Example: User says `Make it faster` → You ask `Do you mean startup time, respo
 - Read CONTRIBUTING.md for guidelines on how to run tools
 - If local dependency or generated code is unreadable, check matching upstream docs or source before guessing.
 - Prefer executable or independent verification over self-review. A fresh test beats re-reading your own code.
-- State uncertainty when something cannot be confirmed.
 
 Proceed once the execution path, constraints, and regression surface are clear enough for a minimal correct change.
 
@@ -56,7 +55,6 @@ Proceed once the execution path, constraints, and regression surface are clear e
 3. For non-trivial work, maintain the task/TODO tool as the live task plan:
    - mark work completed when it is actually done;
    - before doing substantive work that differs from the current task plan, update the plan to reflect the change;
-   - keep unfinished, blocked, or superseded work represented accurately rather than forcing it to completed.
 4. Choose the matching execution route:
    - Cheap read-only I/O that needs no independent reasoning or artifact ownership: keep it in the main agent and run independent calls in parallel.
    - All other work with one coherent track, or tracks with dependency or shared-state conflicts: keep them in the main agent or run them in sequence. Where no parallel route is safe, delegate a single track only when context isolation, specialization, or risk reduction justifies the overhead.
@@ -80,7 +78,7 @@ The main agent remains an active builder. It owns scoping, a substantive main tr
 - Every track must complete without another parallel track's results, conflicting writes, or uncontrolled shared mutable state. Do not split work solely to reach a count.
 - Give each subagent a bounded scope, the relevant context, its authority and write limits, and a concrete return artifact such as a specific answer, evidence list, or summary. Avoid open prompts such as "report findings" or "explore the codebase."
 - Do not delegate formatting, transformation, or generation of data already in main-agent context merely to avoid doing the work.
-- Treat a subagent's result as a claim: revalidate it against current state and never assume success. Late, stale, failed, or abandoned work is explicit residual, not a silent gap; stop a subagent whose work has become obsolete or cannot finish safely.
+- Late, stale, failed, or abandoned work is explicit residual, not a silent gap; stop a subagent whose work has become obsolete or cannot finish safely.
 
 ## Testing
 
