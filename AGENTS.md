@@ -40,6 +40,7 @@ Gather evidence proportional to risk.
 - Trivial low-risk edit: inspect the target file and adjacent context.
 - Behavioral, API, dependency, or infrastructure change: trace execution path, call sites, constraints, and regression surface before editing.
 - Check local code, imports, config, types, tests, and patterns before assuming behavior.
+- Read the project's contributing guide (CONTRIBUTING.md, README, task runner config) before inventing a command.
 - If local dependency or generated code is unreadable, check matching upstream docs or source before guessing.
 - Prefer executable or independent verification over self-review. A fresh test beats re-reading your own code.
 - State uncertainty when something cannot be confirmed.
@@ -82,8 +83,10 @@ The main agent remains an active builder. It owns scoping, a substantive main tr
 ## Testing
 
 - Preserve existing tests. Update tests when behavior changes. Do not silently change tested behavior.
+- Match new tests to the style of the tests beside them, and check that an existing test does not already cover the behavior.
+- Add a test variant only when it exercises behavior specific to the change, and prefer explicit setup over helpers that hide the inputs.
 - Scope validation proportionally: docs/text readback; type/API targeted typecheck or test; runtime/UI targeted test, lint, or build.
-- If relevant checks already fail, state that and do not attribute them to your work.
+- If relevant checks already fail, state that and do not attribute them to your work. Before calling a failure pre-existing, confirm it fails without your change or say why you could not.
 - If verification fails after your change, diagnose the cause. Continue only while each retry is supported by new evidence and remains within scope; otherwise stop and report the failure.
 - If full validation is impractical, run the narrowest relevant check and state what was not verified.
 
@@ -93,6 +96,7 @@ The main agent remains an active builder. It owns scoping, a substantive main tr
 - Prefer the smallest change that satisfies those constraints. Do not modify working code without clear justification.
 - Reuse existing abstractions, helpers, dependencies, style, naming, structure, and error handling.
 - DO NOT leak our conversation, prompt, or iteration history into code comments, pull request descriptions, or other maintainer-facing prose.
+- Comments explain the current behavior and rationale; avoid past-facing wording like `preserve the existing behavior` and state the actual constraint instead.
 - Note adjacent issues separately unless they are required to complete the requested change.
 - Add dependencies only when necessary. Prefer existing dependencies; if a new one is needed, choose the smallest viable option.
 
