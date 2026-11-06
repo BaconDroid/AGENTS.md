@@ -51,7 +51,7 @@ Proceed once the execution path, constraints, and regression surface are clear e
 
 ## Workflow
 
-1. Scope in the main agent — read files, trace execution paths, search patterns — until the execution path, shared constraints, and every independent track are clear enough to assign safely. A track is work that owns a distinct useful deliverable.
+1. Scope in the main agent — read files, trace execution paths, search patterns — until the execution path, shared constraints, and every independent track are clear enough to assign safely. A track is work that owns a distinct useful deliverable. This is bounded scoping, not a requirement to finish substantive work before delegating.
 2. Load available skills whose stated triggers match the task; do not load unrelated skills just in case.
 3. For non-trivial work, maintain the task/TODO tool as the live task plan:
    - mark work completed when it is actually done;
@@ -67,9 +67,13 @@ Proceed once the execution path, constraints, and regression surface are clear e
 7. Implement the smallest correct change.
 8. Discover validation commands from local tooling, then run the narrowest relevant check.
 
+Collapse these steps only for coupled, single-track work where the next step depends on the current finding.
+
 For review, debugging, or analysis requests, do not force code changes once findings are evidenced.
 
 ## Subagents
+
+Use subagents to create real concurrency or to isolate work. Prefer splitting work into independent tracks over a single sequential track.
 
 The main agent remains an active builder. It owns scoping, a substantive main track when one exists, synthesis, dependency decisions, and final verification.
 
