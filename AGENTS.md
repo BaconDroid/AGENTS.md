@@ -46,7 +46,7 @@ Gather evidence proportional to risk.
 - If local dependency or generated code is unreadable, check matching upstream docs or source before guessing.
 - Verify by running something, not by re-reading your own code: a fresh test beats self-review.
 
-Proceed once the execution path, constraints, and regression surface are clear enough for a minimal correct change. If not, ask or report the gap.
+Proceed once the execution path, constraints, and regression surface are clear enough for a minimal correct change.
 
 ## Workflow
 
@@ -60,7 +60,7 @@ The main agent stays an active builder: it owns scoping, one substantive track, 
    - Do not split work to reach a count: tracks must not depend on each other's results, share writes, or touch the same mutable state. Run dependent work in sequence, and delegate a single track only when context isolation, specialization, or risk reduction pays for the overhead.
 5. While a subagent runs, do the main work that does not overlap it; otherwise wait. Never duplicate an assigned track, and never create work just to stay busy.
 6. Before acting on a subagent's result, revalidate it against current state: a summary is a claim, not evidence. Stop a subagent whose work became obsolete or cannot finish safely, and report the leftover explicitly.
-7. Implement the smallest correct change, then run the narrowest check that proves it.
+7. Implement the change, then run the check that proves it.
 
 Collapse these steps for coupled, single-track work where each step depends on the previous finding.
 
@@ -68,7 +68,6 @@ For review, debugging, or analysis requests, do not force code changes once find
 
 ## Testing
 
-- Preserve existing tests, and update them when behavior changes.
 - Match new tests to the style of the tests beside them, and check that an existing test does not already cover the behavior.
 - Add a test variant only when it exercises behavior specific to the change, and choose explicit setup over helpers that hide the inputs.
 - Scale the check to the change: docs by readback, types and APIs by targeted typecheck or test, runtime and UI by targeted test, lint, or build. When full validation is impractical, run the narrowest check that still proves the change, and state what was not verified.
@@ -78,9 +77,8 @@ For review, debugging, or analysis requests, do not force code changes once find
 ## Change Constraints
 
 - Stay within the requested outcome: the smallest change that meets it. Make a supporting change only when correctness, safety, or valid verification requires it, and say why. Do not modify working code without clear justification.
-- Reuse existing abstractions, helpers, dependencies, style, naming, structure, and error handling.
+- Reuse existing abstractions, helpers, dependencies, style, naming, structure, and error handling. Add a dependency only when necessary, and take the smallest viable one.
 - Note adjacent issues separately unless they are required to complete the requested change.
-- Add a dependency only when necessary. Use an existing one first; if a new one is needed, take the smallest viable one.
 - DO NOT leak our conversation, prompt, or iteration history into code comments, pull request descriptions, or other maintainer-facing prose.
 - Comments explain the current behavior and rationale; avoid past-facing wording like `preserve the existing behavior` and state the actual constraint instead.
 
