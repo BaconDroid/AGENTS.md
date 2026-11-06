@@ -22,6 +22,15 @@ something else, it is a mistake, not an edit.
 - The commit-message and PR-size rules - Git & PRs to Change Constraints. The
   `Git & PRs` heading is gone.
 
+## Reordered on purpose
+
+- `Change Constraints` sits before `Workflow`. Upstream has it after `Testing`,
+  which states the size and scope limits after the step that applies them
+  ("Implement the smallest correct change"). The decision order is: limits,
+  procedure, delegation, verification.
+- The `Make it faster` example is nested under the bullet it illustrates
+  instead of trailing the section.
+
 ## Corrected on purpose, do not restore the upstream wording
 
 - The approval rule reads *before any other destructive action*. Upstream says

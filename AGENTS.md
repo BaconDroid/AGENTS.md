@@ -29,12 +29,11 @@ The Boundaries section applies before these tradeoffs. For remaining conflicts, 
 ## Uncertainty
 
 - Ask before an unresolved material choice.
+  Example: User says `Make it faster` → You ask `Do you mean startup time, response latency, or memory usage?`
 - Material choices include behavior, API/UX, naming, persistence, auth, dependencies, config, and compatibility.
 - Prefer one targeted question. When bundling, ensure each question can be answered independently.
 - Proceed without asking when the choice is resolved, or when the remaining ambiguity is low-risk and repo conventions make the assumption clear. State the assumption briefly.
 - When required user input is unavailable, do not wait indefinitely. Outside Boundaries, proceed only when evidence supports a low-risk, reversible option; record the unresolved choice and assumption, then report both. Otherwise stop before the affected action and report what input is needed.
-
-Example: User says `Make it faster` → You ask `Do you mean startup time, response latency, or memory usage?`
 
 ## Evidence
 
@@ -47,6 +46,18 @@ Example: User says `Make it faster` → You ask `Do you mean startup time, respo
 - Prefer executable or independent verification over self-review. A fresh test beats re-reading your own code.
 
 Proceed once the execution path, constraints, and regression surface are clear enough for a minimal correct change.
+
+## Change Constraints
+
+- Stay within the requested outcome. Make supporting changes only when required for correctness, safety, or valid verification; explain material additions to scope.
+- Prefer the smallest change that satisfies those constraints. Do not modify working code without clear justification.
+- Reuse existing abstractions, helpers, dependencies, style, naming, structure, and error handling.
+- Add dependencies only when necessary. Prefer existing dependencies; if a new one is needed, choose the smallest viable option.
+- Note adjacent issues separately unless they are required to complete the requested change.
+- DO NOT leak our conversation, prompt, or iteration history into code comments, pull request descriptions, or other maintainer-facing prose.
+- PREFER comments that explain the current behavior and rationale. Avoid past-facing wording like "preserve the existing behavior"; explain the actual backwards-compatibility constraint instead.
+- Write commit messages that state the change clearly and why it was needed.
+- Keep PRs small and scoped to one concern.
 
 ## Workflow
 
@@ -91,18 +102,6 @@ The main agent remains an active builder. It owns scoping, a substantive main tr
 - If full validation is impractical, run the narrowest relevant check and state what was not verified.
 - If relevant checks already fail, state that and do not attribute them to your work. NEVER assume test failures are pre-existing, it is very rare that `main` has warnings
 - If verification fails after your change, diagnose the cause. Continue only while each retry is supported by new evidence and remains within scope; otherwise stop and report the failure.
-
-## Change Constraints
-
-- Stay within the requested outcome. Make supporting changes only when required for correctness, safety, or valid verification; explain material additions to scope.
-- Prefer the smallest change that satisfies those constraints. Do not modify working code without clear justification.
-- Reuse existing abstractions, helpers, dependencies, style, naming, structure, and error handling.
-- Add dependencies only when necessary. Prefer existing dependencies; if a new one is needed, choose the smallest viable option.
-- Note adjacent issues separately unless they are required to complete the requested change.
-- DO NOT leak our conversation, prompt, or iteration history into code comments, pull request descriptions, or other maintainer-facing prose.
-- PREFER comments that explain the current behavior and rationale. Avoid past-facing wording like "preserve the existing behavior"; explain the actual backwards-compatibility constraint instead.
-- Write commit messages that state the change clearly and why it was needed.
-- Keep PRs small and scoped to one concern.
 
 ## Safety & Infrastructure
 
