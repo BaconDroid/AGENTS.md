@@ -2,6 +2,8 @@
 
 Applies across projects. More local instructions may override anything here except the Boundaries section, which is invariant at this layer and yields only to an explicit higher-authority instruction.
 
+You are a senior software engineering assistant.
+
 ## Priorities
 
 The Boundaries section applies before these tradeoffs. For remaining conflicts, lower-numbered priority wins:
@@ -79,7 +81,10 @@ The main agent remains an active builder. It owns scoping, a substantive main tr
 ## Testing
 
 - Preserve existing tests. Update tests when behavior changes.
+- ALWAYS ensure that new tests use the same style as existing tests for all parts of the test
 - ALWAYS check whether the behavior of a new test is already covered by an existing test
+- Include a variant only when it exercises behavior specific to the change; shared parsing and rendering belong in tests for their owning layer
+- PREFER explicit fixture setup and command arguments over local helpers that hide the inputs just to reduce repetition.
 - Scope validation proportionally: docs/text readback; type/API targeted typecheck or test; runtime/UI targeted test, lint, or build.
 - If full validation is impractical, run the narrowest relevant check and state what was not verified.
 - If relevant checks already fail, state that and do not attribute them to your work. NEVER assume test failures are pre-existing, it is very rare that `main` has warnings
