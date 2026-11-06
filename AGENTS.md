@@ -28,8 +28,9 @@ The Boundaries section applies before these tradeoffs. For remaining conflicts, 
 
 ## Uncertainty
 
-- ASK before an unresolved material choice: behavior, API/UX, naming, persistence, auth, dependencies, config, compatibility. Do not ask when the request, a higher-authority instruction, or clear evidence already resolves it.
-- Ask one targeted question. If you bundle several, each must be answerable on its own.
+- Ask before an unresolved material choice — not before a choice the user's request, a higher-authority instruction, or clear evidence has already resolved.
+- Material choices include behavior, API/UX, naming, persistence, auth, dependencies, config, and compatibility.
+- Prefer one targeted question. When bundling, ensure each question can be answered independently.
 - Proceed without asking when the choice is resolved, or when the remaining ambiguity is low-risk and repo conventions make the assumption clear. State the assumption briefly.
 - When required user input is unavailable, do not wait indefinitely. Outside Boundaries, proceed only when evidence supports a low-risk, reversible option; record the unresolved choice and assumption, then report both. Otherwise stop before the affected action and report what input is needed.
 
@@ -41,7 +42,7 @@ Example: User says `Make it faster` → You ask `Do you mean startup time, respo
 - Trivial low-risk edit: inspect the target file and adjacent context.
 - Behavioral, API, dependency, or infrastructure change: trace execution path, call sites, constraints, and regression surface before editing.
 - Check local code, imports, config, types, tests, and patterns before assuming behavior.
-- Read the project's contributing guide (CONTRIBUTING.md, README, task runner config) before inventing a command.
+- Read CONTRIBUTING.md for guidelines on how to run tools
 - If local dependency or generated code is unreadable, check matching upstream docs or source before guessing.
 - Prefer executable or independent verification over self-review. A fresh test beats re-reading your own code.
 - State uncertainty when something cannot be confirmed.
@@ -68,11 +69,13 @@ Collapse these steps only for coupled, single-track work where each step depends
 ## Testing
 
 - Preserve existing tests, and update them when behavior changes.
-- Match new tests to the style of the tests beside them, and check that an existing test does not already cover the behavior.
-- Add a test variant only when it exercises behavior specific to the change, and choose explicit setup over helpers that hide the inputs.
+- ALWAYS ensure that new tests use the same style as existing tests for all parts of the test
+- ALWAYS check whether the behavior of a new test is already covered by an existing test
+- Include a variant only when it exercises behavior specific to the change; shared parsing and rendering belong in tests for their owning layer
+- PREFER explicit fixture setup and command arguments over local helpers that hide the inputs just to reduce repetition.
 - Scope validation proportionally: docs/text readback; type/API targeted typecheck or test; runtime/UI targeted test, lint, or build.
 - If full validation is impractical, run the narrowest relevant check and state what was not verified.
-- If relevant checks already fail, state that and do not attribute them to your work. Before calling a failure pre-existing, confirm it fails without your change or say why you could not.
+- If relevant checks already fail, state that and do not attribute them to your work. NEVER assume test failures are pre-existing; confirm it fails without your change or say why you could not.
 - If verification fails after your change, diagnose the cause. Continue only while each retry is supported by new evidence and remains in scope; otherwise stop and report the failure.
 
 ## Change Constraints
@@ -82,11 +85,8 @@ Collapse these steps only for coupled, single-track work where each step depends
 - Reuse existing abstractions, helpers, dependencies, style, naming, structure, and error handling.
 - Add dependencies only when necessary. Prefer existing dependencies; if a new one is needed, choose the smallest viable option.
 - Note adjacent issues separately unless they are required to complete the requested change.
-- Do not reformat code you did not change; match the project's formatter and linter.
-- Do not edit generated files or lockfiles by hand; change the source and regenerate.
 - DO NOT leak our conversation, prompt, or iteration history into code comments, pull request descriptions, or other maintainer-facing prose.
-- Comments explain the current behavior and rationale; avoid past-facing wording like `preserve the existing behavior` and state the actual constraint instead.
-- Remove your own debug leftovers before finishing: commented-out code, prints, and TODO stubs.
+- PREFER comments that explain the current behavior and rationale. Avoid past-facing wording like "preserve the existing behavior"; explain the actual backwards-compatibility constraint instead.
 - Write commit messages that state the change clearly and why it was needed.
 - Keep PRs small and scoped to one concern.
 
