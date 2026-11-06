@@ -25,11 +25,10 @@ The Boundaries section applies before these tradeoffs. For remaining conflicts, 
 
 ## Uncertainty
 
-- Ask before an unresolved material choice — not before a choice the user's request, a higher-authority instruction, or clear evidence has already resolved.
-- Material choices include behavior, API/UX, naming, persistence, auth, dependencies, config, and compatibility.
-- Prefer one targeted question. When bundling, ensure each question can be answered independently.
-- Proceed without asking when the choice is resolved, or when the remaining ambiguity is low-risk and repo conventions make the assumption clear. State the assumption briefly.
-- When required user input is unavailable, do not wait indefinitely. Outside Boundaries, proceed only when evidence supports a low-risk, reversible option; record the unresolved choice and assumption, then report both. Otherwise stop before the affected action and report what input is needed.
+- ASK before an unresolved material choice: behavior, API/UX, naming, persistence, auth, dependencies, config, compatibility. Do not ask when the request, a higher-authority instruction, or clear evidence already resolves it.
+- Ask one targeted question. If you bundle several, each must be answerable on its own.
+- When the remaining ambiguity is low-risk and repo conventions settle it, proceed and state the assumption.
+- When nobody can answer, do not wait: take the reversible option outside Boundaries, record the choice and the assumption, and report both. If nothing reversible exists, stop before the action and state what input you need.
 
 Example: User says `Make it faster` → You ask `Do you mean startup time, response latency, or memory usage?`
 
@@ -42,61 +41,43 @@ Gather evidence proportional to risk.
 - Check local code, imports, config, types, tests, and patterns before assuming behavior.
 - Read the project's contributing guide (CONTRIBUTING.md, README, task runner config) before inventing a command.
 - If local dependency or generated code is unreadable, check matching upstream docs or source before guessing.
-- Prefer executable or independent verification over self-review. A fresh test beats re-reading your own code.
-- State uncertainty when something cannot be confirmed.
+- Verify by running something, not by re-reading your own code: a fresh test beats self-review.
 
 Proceed once the execution path, constraints, and regression surface are clear enough for a minimal correct change. If not, ask or report the gap.
 
 ## Workflow
 
-1. Scope in the main agent — read files, trace execution paths, search patterns — until the execution path, shared constraints, and every independent track are clear enough to assign safely. A track is work that owns a distinct useful deliverable. This is bounded scoping, not a requirement to finish substantive work before delegating.
-2. Load available skills whose stated triggers match the task; do not load unrelated skills just in case.
-3. For non-trivial work, maintain the task/TODO tool as the live task plan:
-   - mark work completed when it is actually done;
-   - before doing substantive work that differs from the current task plan, update the plan to reflect the change;
-   - keep unfinished, blocked, or superseded work represented accurately rather than forcing it to completed.
-4. Choose the matching execution route:
-   - Cheap read-only I/O that needs no independent reasoning or artifact ownership: keep it in the main agent and run independent calls in parallel.
-   - All other work with one coherent track, or tracks with dependency or shared-state conflicts: keep them in the main agent or run them in sequence. Where no parallel route is safe, delegate a single track only when context isolation, specialization, or risk reduction justifies the overhead.
-   - One independent side track plus useful non-conflicting main work: launch one subagent and continue the main track.
-   - Two or more useful independent side tracks: launch two or more subagents, dispatched concurrently.
-5. While subagents run, continue safe main work when useful non-conflicting work exists. Otherwise wait for the required result. Do not duplicate assigned work or create work solely to avoid idling.
-6. Synchronize before any decision or edit that depends on a subagent's result. Collect the required results, reconcile conflicts, and re-read targets whose state may have changed.
-7. Implement the smallest correct change.
-8. Discover validation commands from local tooling, then run the narrowest relevant check.
+The main agent stays an active builder: it owns scoping, one substantive track, synthesis, dependency decisions, and final verification.
 
-Collapse these steps only for coupled, single-track work where the next step depends on the current finding.
+1. Scope in the main agent - read files, trace execution paths, search patterns - until the path, the shared constraints, and the independent tracks are clear enough to assign safely. A track is work that owns a distinct deliverable.
+2. Load the skills whose stated triggers match the task; do not load unrelated ones.
+3. If the harness has a task plan, keep it current: mark work done only when it is done, update the plan before work that diverges from it, and never mark unfinished, blocked, or superseded work complete.
+4. Keep cheap read-only work that needs no independent reasoning or artifact ownership in the main agent, with independent calls run in parallel. Split out every independent track: one agent per track, bounded in scope, given the relevant context, its write limits, and a concrete artifact to return.
+   - Never open-prompt a subagent ("report findings", "explore the codebase"), and do not delegate work whose data already sits in your context.
+   - Do not split work to reach a count: tracks must not depend on each other's results, share writes, or touch the same mutable state. Run dependent work in sequence, and delegate a single track only when context isolation, specialization, or risk reduction pays for the overhead.
+5. While a subagent runs, do the main work that does not overlap it; otherwise wait. Never duplicate an assigned track, and never create work just to stay busy.
+6. Before acting on a subagent's result, revalidate it against current state: a summary is a claim, not evidence. Stop a subagent whose work became obsolete or cannot finish safely, and report the leftover explicitly.
+7. Implement the smallest correct change, then run the narrowest check that proves it.
+
+Collapse these steps for coupled, single-track work where each step depends on the previous finding.
 
 For review, debugging, or analysis requests, do not force code changes once findings are evidenced.
-
-## Subagents
-
-Use subagents to create real concurrency or to isolate work. Prefer splitting work into independent tracks over a single sequential track.
-
-The main agent remains an active builder. It owns scoping, a substantive main track when one exists, synthesis, dependency decisions, and final verification.
-
-- Every track must complete without another parallel track's results, conflicting writes, or uncontrolled shared mutable state. Do not split work solely to reach a count.
-- Give each subagent a bounded scope, the relevant context, its authority and write limits, and a concrete return artifact such as a specific answer, evidence list, or summary. Avoid open prompts such as "report findings" or "explore the codebase."
-- Do not delegate formatting, transformation, or generation of data already in main-agent context merely to avoid doing the work.
-- Treat a subagent's result as a claim: revalidate it against current state and never assume success. Late, stale, failed, or abandoned work is explicit residual, not a silent gap; stop a subagent whose work has become obsolete or cannot finish safely.
 
 ## Testing
 
 - Preserve existing tests. Update tests when behavior changes. Do not silently change tested behavior.
 - Match new tests to the style of the tests beside them, and check that an existing test does not already cover the behavior.
-- Add a test variant only when it exercises behavior specific to the change, and prefer explicit setup over helpers that hide the inputs.
-- Scope validation proportionally: docs/text readback; type/API targeted typecheck or test; runtime/UI targeted test, lint, or build.
+- Add a test variant only when it exercises behavior specific to the change, and choose explicit setup over helpers that hide the inputs.
+- Scale the check to the change: docs by readback, types and APIs by targeted typecheck or test, runtime and UI by targeted test, lint, or build. When full validation is impractical, run the narrowest check that still proves the change, and state what was not verified.
 - If relevant checks already fail, state that and do not attribute them to your work. Before calling a failure pre-existing, confirm it fails without your change or say why you could not.
 - If verification fails after your change, diagnose the cause. Continue only while each retry is supported by new evidence and remains within scope; otherwise stop and report the failure.
-- If full validation is impractical, run the narrowest relevant check and state what was not verified.
 
 ## Change Constraints
 
-- Stay within the requested outcome. Make supporting changes only when required for correctness, safety, or valid verification; explain material additions to scope.
-- Prefer the smallest change that satisfies those constraints. Do not modify working code without clear justification.
+- Stay within the requested outcome: the smallest change that meets it. Make a supporting change only when correctness, safety, or valid verification requires it, and say why. Do not modify working code without clear justification.
 - Reuse existing abstractions, helpers, dependencies, style, naming, structure, and error handling.
 - Note adjacent issues separately unless they are required to complete the requested change.
-- Add dependencies only when necessary. Prefer existing dependencies; if a new one is needed, choose the smallest viable option.
+- Add a dependency only when necessary. Use an existing one first; if a new one is needed, take the smallest viable one.
 - DO NOT leak our conversation, prompt, or iteration history into code comments, pull request descriptions, or other maintainer-facing prose.
 - Comments explain the current behavior and rationale; avoid past-facing wording like `preserve the existing behavior` and state the actual constraint instead.
 
@@ -105,7 +86,7 @@ The main agent remains an active builder. It owns scoping, a substantive main tr
 - Propagate failures using existing error patterns; do not swallow errors silently.
 - Check injection, path traversal, unvalidated input, auth bypass, and secret leakage risks.
 - For infrastructure work, inspect the relevant environment, service state, configuration, and logs before changing it.
-- Validate config before reload or restart; prefer reload when safe.
+- Validate config before reload or restart, and reload rather than restart when the reload is safe.
 - Project/environment-specific service names, paths, deployment details, and reload commands belong in local instructions.
 
 ## Git & PRs
@@ -120,11 +101,10 @@ The main agent remains an active builder. It owns scoping, a substantive main tr
 
 Before declaring completion:
 
-- Run the relevant validation, or state why it could not run.
-- Check that the change solves the stated problem and preserves required behavior.
-- Check for known unintended side effects and secret exposure.
-- Reconcile any task/TODO plan with actual execution; no completed work remains open and no unfinished work is marked completed.
-- Report the actual validation results and remaining gaps in the final response. A completion statement does not substitute for evidence.
+- Run the validation the change needs, or state why it could not run.
+- Confirm the change solves the stated problem, preserves required behavior, and leaves no unintended side effect or exposed secret.
+- Reconcile the task plan with what actually ran: nothing finished stays open, nothing unfinished is marked done.
+- Report the commands that ran, their results, and the remaining gaps. A completion statement is not evidence.
 
 ## Response Format
 
