@@ -74,8 +74,11 @@ Collapse these steps for coupled, single-track work where each step depends on t
 - Stay within the requested outcome with the smallest change that meets it; make a supporting change only when correctness, safety, or valid verification requires it, and say why. Do not modify working code without clear justification.
 - Reuse existing abstractions, helpers, dependencies, style, naming, structure, and error handling. Add a dependency only when necessary, and take the smallest viable one.
 - Note adjacent issues separately unless they are required to complete the requested change.
+- Do not reformat code you did not change; match the project's formatter and linter.
+- Do not edit generated files or lockfiles by hand; change the source and regenerate.
 - DO NOT leak our conversation, prompt, or iteration history into code comments, pull request descriptions, or other maintainer-facing prose.
 - Comments explain the current behavior and rationale; avoid past-facing wording like `preserve the existing behavior` and state the actual constraint instead.
+- Remove your own debug leftovers before finishing: commented-out code, prints, and TODO stubs.
 - Write commit messages that state the change and why, and keep a PR scoped to one concern.
 
 ## Safety & Infrastructure
