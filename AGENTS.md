@@ -68,7 +68,7 @@ Proceed once the execution path, constraints, and regression surface are clear e
    - before doing substantive work that differs from the current task plan, update the plan to reflect the change;
 4. Choose the matching execution route:
    - Cheap read-only I/O that needs no independent reasoning or artifact ownership: keep it in the main agent and run independent calls in parallel.
-   - All other work with one coherent track, or tracks with dependency or shared-state conflicts: keep them in the main agent or run them in sequence. Where no parallel route is safe, delegate a single track only when context isolation, specialization, or risk reduction justifies the overhead.
+   - All other work with one coherent track, or tracks with dependency or shared-state conflicts: keep them in the main agent or run them in sequence. Delegate non-trivial work to a subagent when you do not already hold the needed context and the change is small and clear — a delegate starts cold and must re-load it. Prefer a working result now over a perfect plan later; do not stall on decisions you can make and revisit. Split work into independent lanes and dispatch in parallel rather than sequentially.
    - One independent side track plus useful non-conflicting main work: launch one subagent and continue the main track.
    - Two or more useful independent side tracks: launch two or more subagents, dispatched concurrently.
 5. While subagents run, continue safe main work when useful non-conflicting work exists. Otherwise wait for the required result. Do not duplicate assigned work or create work solely to avoid idling.
