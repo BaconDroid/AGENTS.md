@@ -68,7 +68,7 @@ Proceed once the execution path, constraints, and regression surface are clear e
    - before doing substantive work that differs from the current task plan, update the plan to reflect the change;
 4. Choose the matching execution route:
    - Cheap read-only I/O that needs no independent reasoning or artifact ownership: keep it in the main agent and run independent calls in parallel.
-   - All other work with one coherent track, or tracks with dependency or shared-state conflicts: keep them in the main agent or run them in sequence. Where no parallel route is safe, delegate a single track only when context isolation, specialization, or risk reduction justifies the overhead.
+   - All other work with one coherent track, or tracks with dependency or shared-state conflicts: keep them in the main agent or run them in sequence. The orchestrator delegates by default: delegate a single track when the work has a clear deliverable, bounded scope, and its own acceptance criteria — even if the main agent could do it, delegation wins when it keeps lanes isolated, makes progress in parallel, or matches an agent's specialization. Only keep a single track local when the task is trivially small (a grep, a quick sed), strictly sequential with no useful concurrency, and the overhead of spawning would dominate.
    - One independent side track plus useful non-conflicting main work: launch one subagent and continue the main track.
    - Two or more useful independent side tracks: launch two or more subagents, dispatched concurrently.
 5. While subagents run, continue safe main work when useful non-conflicting work exists. Otherwise wait for the required result. Do not duplicate assigned work or create work solely to avoid idling.
